@@ -3,6 +3,7 @@ const todoInput = document.getElementById("todo-input");
 const addBtn = document.querySelector("#todo-button");
 const todoUl = document.querySelector("#todo-ul");
 
+//global array for todo obj
 let todoList = JSON.parse(localStorage.getItem("todoList")) || [];
 
 //load event vs. DomContentLoaded
@@ -12,12 +13,17 @@ window.addEventListener("load", () => {
 
 const getTodoListFromLocalStorage = () => {
     //get TodoList from localStorage and load to UI
+    todoList.forEach((todo)=>{
+        createTodo(todo);
+    });
 }
 
 //form => submit event vs. button => click event
 // form.addEventListener("submit", ()=>{})
 addBtn.addEventListener("click", (e) => {
+    //prevent form submit
     e.preventDefault();
+    //user input control
     if(todoInput.value.trim() === ""){
         alert("Please, enter new todo text!");
         return;
@@ -32,8 +38,10 @@ addBtn.addEventListener("click", (e) => {
         text : todoInput.value //userInput
     }
 
+    // insertTodoToDB(newTodo);
     createTodo(newTodo);
     
+    //UPDATE TODO array
     todoList.push(newTodo);
     //localStorage todoList Update
     //localStorage vs. SessionStorage vs. Cookies
@@ -72,8 +80,50 @@ const createTodo = (newTodo) =>{
     removeIcon.setAttribute("class", "fas fa-trash");
     li.append(removeIcon);
 
-    console.log(li);
+    // console.log(li);
 
     //append li to ul
-    todoUl.append(li);
+    //prepend vs. append
+    // todoUl.append(li);
+    todoUl.prepend(li);
+
 }
+
+//Capturing vs. Bubbling
+//static closest parent element => child
+todoUl.addEventListener("click", (e)=>{
+    const idAttr = e.target.closest("li").getAttribute("id");
+    if(e.target.classList.contains("fa-check")){
+        // alert("check clicked");
+        //update UI
+        e.target.parentElement.classList.toggle("checked");
+        //update array
+        // todoList.map((todo)=>{
+        //     if(todo.id == idAttr){
+        //         todo.completed = !todo.completed;
+        //     }
+        // });
+        todoList.forEach((todo)=>{
+            if(todo.id == idAttr){
+                todo.completed = !todo.completed;
+            }
+        });
+        //add updated array to localStorage 
+        localStorage.setItem("todoList", JSON.stringify(todoList));
+    }
+    else if(e.target.classList.contains("fa-trash")){
+        // alert("remove clicked");
+        //remove from UI
+        e.target.parentElement.remove();
+        //remove from Array
+        //id si ile silinmeyenleri filtrele array i update et ==> silineni array den remove
+        todoList = todoList.filter((todo)=> todo.id != idAttr);
+        //add updated array to localStorage 
+        localStorage.setItem("todoList", JSON.stringify(todoList));
+
+    }
+    else{
+        alert("other element clicked");
+    }
+    console.log(todoList);
+});
