@@ -120,7 +120,6 @@ todoUl.addEventListener("click", (e)=>{
         todoList = todoList.filter((todo)=> todo.id != idAttr);
         //add updated array to localStorage 
         localStorage.setItem("todoList", JSON.stringify(todoList));
-
     }
     else{
         alert("other element clicked");
