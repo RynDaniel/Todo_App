@@ -86,10 +86,6 @@
     transition: all 0.5s;
   }
   
-  /* ul li:nth-child(even) {
-    background: #dde6f5;
-  } */
-  
   ul li:hover {
     transform: translate(3px, 2px);
   }
